@@ -1,16 +1,17 @@
 // A GET route with the url /api/employees. This will be used to display a JSON of all possible employees.
 
-const employees = require("../data/employees.js");
+const employees = require('../data/employees.js');
 
 module.exports = function(app){
-    app.get("/api/employees", function(eq, res){
+    
+    app.get('/api/employees', function(eq, res){
         res.json(employees);
-    })
+    });
 
 
 //A POST routes /api/employees. This will be used to handle incoming survey results. This route will also be used to handle the compatibility logic.
 
-    app.post("/api/employees", function(eq, res){
+    app.post('/api/employees', function(eq, res){
         
         const userArr = (req.body);
         const match = '';

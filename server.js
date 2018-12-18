@@ -7,9 +7,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.JSON());
+app.use(express.json());
 
-app.use(express.static(path.join(_dirname, 'app/public')));
+app.use(express.static(path.join(__dirname, 'app/public')));
 
 // Point to our router files
 require('./app/routing/apiRoutes')(app);
