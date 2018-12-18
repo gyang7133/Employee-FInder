@@ -2,60 +2,71 @@ $(function(){
 
     //Setup a verification for the form. Reste any invalid to empty values if return false
     const verifyForm = function() {
-        let checker = true;
-        $('input').each(function() {
-            if (!$(this).val()) {
-              checker = false;
-            }
-          });
-    
-        $('.user-select').each(function(i, element) {
-            if (!$(this).val()) {
-              checker = false;
-            }
-          });
+        let isVerifed = true;
 
-          return checker;
-}
+        $('input').each(function() {
+          if (!$(this).val()) {
+            isVerified = false;
+          }
+        });
+    
+        $('.form-control').each(function(i, element) {
+          if (!$(this).val()) {
+            isVerifed = false;
+          }
+        });
+    
+        return isVerified;
+     }
     
 //Submit Button Functionality
-$("#submit").on('click', function () {
+const showModal = function(data) {
 
-    //If form is verified then create an obeject for the user data results
-    if(verifyForm()){
-            
-    const results = {
-        name: $("name").val(),
-        photo: $("photo").val(),
+    // Grab the result from the AJAX post so that the best match's name and photo are displayed.
+    $('#modalName').text(data.name);
+    $('#modalPhoto').attr('src', data.photo);
+
+    // Show the modal with the best match
+    $('#showModal').modal('toggle');
+  }
+
+  const submit = function(e) {
+    e.preventDefault();
+
+    // Check to see if all required fields are filled and verified.
+    if (verifyForm()) {
+
+      // Create an object for the user's input information
+      const inputInfo = {
+        name: $('#name').val().trim(),
+        photo: $('#photo').val().trim(),
         scores: [
-            $("#q1").val(),
-            $("#q2").val(),
-            $("#q3").val(),
-            $("#q4").val(),
-            $("#q5").val(),
-            $("#q6").val(),
-            $("#q7").val(),
-            $("#q8").val(),
-            $("#q9").val(),
-            $("#q10").val(),
+          $('#q1').val(),
+          $('#q2').val(),
+          $('#q3').val(),
+          $('#q4').val(),
+          $('#q5').val(),
+          $('#q6').val(),
+          $('#q7').val(),
+          $('#q8').val(),
+          $('#q9').val(),
+          $('#q10').val()
         ]
+      };
 
+      // AJAX post the data to the employees API.
+      $.post('/api/employees', inputInfo, showModal);
+
+    } else {
+
+      // Display an error alert if the form is not valid
+      $('#warningMessage')
+        .text('Warning! All fields need to be completed before submitting!')
+        .addClass('alert alert-danger');
     }
+  }
 
-    //Show the modal with best match along with name and photo.
-    $.post("/api/employees", results).done(function (data) {
-        console.log(data);
-        $("#responseArea").text(`${data.matched}`);
-        $('#myModal').modal('toggle');
-
-
-    });
-    }
-
-
-
-
-})
+  $('#submit').on('click', submit)
 
     
 })
