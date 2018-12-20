@@ -4,49 +4,58 @@ const employees = require('../data/employees.js');
 
 module.exports = function(app){
 
-    app.get('/api/employees', function(eq, res){
+    app.get('/api/employees', function(req, res){
         res.json(employees);
     });
 
 
-//A POST routes /api/employees. This will be used to handle incoming survey results. This route will also be used to handle the compatibility logic.
+// A POST routes /api/employees. This will be used to handle incoming survey results. This route will also be used to handle the compatibility logic.
 
-    app.post('/api/employees', function(eq, res){
+    app.post('/api/employees', function(req, res){
         
-        const userArr = (req.body);
-        const match = '';
-        const totalDiff = 0;
-        const currentDiff = 0;
+        //Find the closet employee match
+        const findMatch = {
+            name: '',
+            photo: '',
+            scoreDifference: 0
+        };
 
-        //Loop through all the employee selections in the employees data array
-        for(let i = 0; i < employees.length; i++){
+        //Parse user choic results.
+        const userInfo = req.body;
+        const userScores = userInfo.scores;
 
-            //Loop through all the scores for each employee
-            for(let z = 0; z < userArr.scores.length; z++){
-                
-                if((employees[i].scores[z] - userArr.scores[z]) !== 0){
+        //The calculated difference
+        let calcDifference;
 
-                    currentDiff += (Math.abs(parseInt(employees[i].scores[z]) - parseInt(userArr.scores[z])));
-                }
+        //Loop through each employee
+        for (let i = 0; i < employees.length; i++) {
+            const eachEmployee = employees[i];
+            calcDifference = 0;
+
+            //loop through scores of each employee
+            for (let z = 0; z < eachEmployee.scores.length; z++) {
+                const eachEmployeeScore = eachEmployee.scores[z];
+                const eachUserScore = userScores[z];
+
+                //get score diff and calculate the Diff
+                calcDifference += Math.abs(parseInt(eachUserScore) - parseInt(eachEmployeeScore));
             }
 
-            //If the sum of total difference is greater than the current difference of the match reset the match to be the new employee
-            if(!totalDiff || totalDiff > currentDiff){
-                match = employees[i].name;
-                totalDiff = currentDiff;
-                currentDiff = 0;
-            }
-            else{
-                currentDiff = 0;
+            //Iif difference is less than closest match make close match the new employee
+            if (calcDifference <= findMatch.scoreDifference) {
+
+                findMatch.name = eachEmployee.name;
+                findMatch.photo = eachEmployee.photo;
+                findMatch.scoreDifference = calcDifference;
             }
         }
 
-        //Save the user's new data to the employees data 
-        employees.push(userArr);
+        //Save users input information into the employees data
+        employees.push(userInfo);
 
-        //Return a JSON with user's match
-        res.json({status:"OK", matched: match, diff: totalDiff});
-        
+        //json with match
+        res.json(findMatch);
+ 
     });
 
-}
+};

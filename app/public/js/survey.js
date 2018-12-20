@@ -16,7 +16,7 @@ $(function(){
           }
         });
     
-        return isVerified;
+        return isVerifed;
      }
     
 //Submit Button Functionality
@@ -27,19 +27,19 @@ const showModal = function(data) {
     $('#modalPhoto').attr('src', data.photo);
 
     // Show the modal with the best match
-    $('#showModal').modal('toggle');
+    $('#myModal').modal('toggle');
   }
 
-  const submit = function(e) {
-    e.preventDefault();
+  const submit = function(event) {
+    event.preventDefault();
 
     // Check to see if all required fields are filled and verified.
     if (verifyForm()) {
 
       // Create an object for the user's input information
-      const inputInfo = {
+      const userArr = {
         name: $('#name').val().trim(),
-        photo: $('#photo').val().trim(),
+        photo: $('#image').val().trim(),
         scores: [
           $('#q1').val(),
           $('#q2').val(),
@@ -55,11 +55,11 @@ const showModal = function(data) {
       };
 
       // AJAX post the data to the employees API.
-      $.post('/api/employees', inputInfo, showModal);
+      $.post('/api/employees', userArr, showModal);
 
     } else {
 
-      // Display an error alert if the form is not valid
+      // Display an warning alert if the form is not valid
       $('#warningMessage')
         .text('Warning! All fields need to be completed before submitting!')
         .addClass('alert alert-danger');
